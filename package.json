@@ -1,0 +1,28 @@
+{
+  "name": "obs-twitch-overlay",
+  "version": "1.0.0",
+  "description": "My Personal OBS overlay for Twitch.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhyolight/obs-twitch-overlay.git"
+  },
+  "keywords": [
+    "twitch",
+    "obs"
+  ],
+  "author": "Matt Taylor",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rhyolight/obs-twitch-overlay/issues"
+  },
+  "homepage": "https://github.com/rhyolight/obs-twitch-overlay#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "ws": "^6.2.0"
+  }
+}
