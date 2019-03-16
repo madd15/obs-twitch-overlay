@@ -23,6 +23,7 @@
   "homepage": "https://github.com/rhyolight/obs-twitch-overlay#readme",
   "dependencies": {
     "express": "^4.16.4",
+    "request": "^2.88.0",
     "ws": "^6.2.0"
   }
 }
