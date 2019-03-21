@@ -6,10 +6,12 @@ let webHookSubs = {}
 
 const app = express()
 const port = 8081
-const baseUrl = 'http://893c9f0a.ngrok.io'
+const baseUrl = 'http://localhost'
 
 app.use(express.static('static'))
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen(port, () => {
+    console.log(`${baseUrl}:${port}/index.html`)
+})
 
 function updateWebhookSubscriptions() {
     liveStreams.forEach(stream => {
@@ -30,21 +32,21 @@ function updateWebhookSubscriptions() {
     })
 }
 
-twitch.getGame('Science & Technology', (err, scienceAndTech) => {
-
-    let updateLiveStreams = () => {
-        console.log('')
-        twitch.getStreams(scienceAndTech.data[0].id, (streamError, streams) => {
-            liveStreams = streams.data
-            console.table(
-                liveStreams,
-                ['viewer_count', 'user_name', 'started_at', 'title']
-            )
-        })
-    }
-
-    updateLiveStreams()
-
-    setInterval(updateLiveStreams, 10000)
-})
+// twitch.getGame('Science & Technology', (err, scienceAndTech) => {
+//
+//     let updateLiveStreams = () => {
+//         console.log('')
+//         twitch.getStreams(scienceAndTech.data[0].id, (streamError, streams) => {
+//             liveStreams = streams.data
+//             console.table(
+//                 liveStreams,
+//                 ['viewer_count', 'user_name', 'started_at', 'title']
+//             )
+//         })
+//     }
+//
+//     updateLiveStreams()
+//
+//     setInterval(updateLiveStreams, 10000)
+// })
 

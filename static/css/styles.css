@@ -1,0 +1,14 @@
+body {
+    margin: 0;
+}
+
+div {
+    border: 1px solid darkblue;
+    background-color: cadetblue;
+}
+
+#header {
+    margin: 0;
+    background-color: cadetblue;
+    height: 100px;
+}
