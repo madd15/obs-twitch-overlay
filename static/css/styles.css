@@ -3,12 +3,22 @@ body {
 }
 
 div {
-    border: 1px solid darkblue;
-    background-color: cadetblue;
+    /*border: 1px solid darkblue;*/
+    /*background-color: cadetblue;*/
+}
+
+#overlay {
+    width: 1920px;
+    height: 1200px;
+    border: solid 1px black;
 }
 
 #header {
     margin: 0;
-    background-color: #a02531;
-    height: 100px;
+    background-color: #00ccff;
+    height: 55px;
+    color: #004ca0;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 26pt;
+    border-bottom: 2px solid #004ca0;
 }
