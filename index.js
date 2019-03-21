@@ -1,23 +1,50 @@
-const express = require('express')
-const WebSocket = require('ws')
+let express = require('express')
+let twitch = require('./twitch')
+
+let liveStreams = []
+let webHookSubs = {}
 
 const app = express()
 const port = 8081
+const baseUrl = 'http://893c9f0a.ngrok.io'
 
 app.use(express.static('static'))
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
-// const wss = new WebSocket.Server({ port: 8080 })
-//
-// wss.on('connection', function connection(ws) {
-//     ws.on('message', function incoming(message) {
-//         console.log('received: %s', message)
-//     })
-//     ws.send('something');
-// })
-//
+function updateWebhookSubscriptions() {
+    liveStreams.forEach(stream => {
+        if (webHookSubs[stream.name]) {
+            // nothing
+        } else {
+            // create a new one
+            request.post({
+                url: '', formData: {
+                    hub: {
+                        callback: baseUrl + '/_twitch_webhooks',
+                        mode: 'subscribe',
 
-// const Twitch = require('./twitch')
-// const display = require('./display')
-//
-// let twitch = new Twitch()
+                    }
+                }
+            })
+        }
+    })
+}
+
+twitch.getGame('Science & Technology', (err, scienceAndTech) => {
+
+    let updateLiveStreams = () => {
+        console.log('')
+        twitch.getStreams(scienceAndTech.data[0].id, (streamError, streams) => {
+            liveStreams = streams.data
+            console.table(
+                liveStreams,
+                ['viewer_count', 'user_name', 'started_at', 'title']
+            )
+        })
+    }
+
+    updateLiveStreams()
+
+    setInterval(updateLiveStreams, 10000)
+})
+
