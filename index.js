@@ -5,7 +5,7 @@ let liveStreams = []
 let webHookSubs = {}
 
 const app = express()
-const port = 8081
+const port = process.env.PORT || 5000
 const baseUrl = 'http://localhost'
 
 app.use(express.static('static'))
