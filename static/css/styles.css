@@ -4,11 +4,11 @@ body {
 
 div {
     border: 1px solid darkblue;
-    background-color: #a02531;
+    background-color: cadetblue;
 }
 
 #header {
     margin: 0;
-    background-color: cadetblue;
+    background-color: #a02531;
     height: 100px;
 }
