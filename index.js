@@ -2,7 +2,8 @@ let express = require('express')
 let request = require('request')
 
 let clientId = 'fmjgn1bqxpw7p0xgvryoe6027483ve'
-let appSecret = process.env.APP_SECRET
+// let appSecret = process.env.APP_SECRET
+let appSecret = 's1u6yj9aexfmn7pp0vvgeiwfktbmar'
 let streamId = 'rhyolight_'
 let userId = '53666502'
 
@@ -56,12 +57,26 @@ app.get('/_twitch_webhooks', (req, res) => {
 })
 
 
+function authenticate(cb) {
+    // POST https://id.twitch.tv/oauth2/token
+    //         ?client_id=<your client ID>
+    // &client_secret=<your client secret>
+    // &grant_type=client_credentials
+    // &scope=<space-separated list of scopes>
+    request.post({
+        url: 'https://id.twitch.tv/oauth2/token',
+        client_secret: appSecret,
+        grant_type: 'client_credentials',
+    })
+}
+
+
 function getExistingSubs(cb) {
     let payload = {
         url: 'https://api.twitch.tv/helix/webhooks/subscriptions',
         headers: {
             'Client-ID': clientId,
-            'Authorization': `Bearer ${appSecret}`,
+            // 'Authorization': `Bearer ${clientId}`,
             'User-Agent': 'request',
         }
     }
