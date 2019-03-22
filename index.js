@@ -1,15 +1,12 @@
 let express = require('express')
 let request = require('request')
 
-let twitch = require('./twitch')
 let clientId = 'fmjgn1bqxpw7p0xgvryoe6027483ve'
-
-let liveStreams = []
-let webHookSubs = {}
+let streamId = 'rhyolight_'
 
 const app = express()
 const port = process.env.PORT || 5000
-const baseUrl = 'http://localhost'
+const baseUrl = 'https://obs-twitch-overlay.herokuapp.com'
 
 // This serves the static files for the JS client program.
 app.use(express.static('static'))
@@ -42,25 +39,28 @@ app.get('/_twitch', (req, res) => {
     })
 })
 
+app.get('/_twitch_webhooks', (req, res) => {
+    console.log(req.query)
+    console.log(req.body)
+})
 
-// function updateWebhookSubscriptions() {
-//     liveStreams.forEach(stream => {
-//         if (webHookSubs[stream.name]) {
-//             // nothing
-//         } else {
-//             // create a new one
-//             request.post({
-//                 url: '', formData: {
-//                     hub: {
-//                         callback: baseUrl + '/_twitch_webhooks',
-//                         mode: 'subscribe',
-//
-//                     }
-//                 }
-//             })
-//         }
-//     })
-// }
+
+
+function updateWebhookSubscriptions() {
+    // create a new stream monitor
+    console.log('Creating stream webhook for ')
+    request.post({
+        url: 'https://api.twitch.tv/helix/webhooks/hub', formData: {
+            hub: {
+                callback: baseUrl + '/_twitch_webhooks',
+                mode: 'subscribe',
+                topic: 'https://api.twitch.tv/helix/streams',
+            }
+        }
+    })
+}
+
+updateWebhookSubscriptions()
 
 // twitch.getGame('Science & Technology', (err, scienceAndTech) => {
 //

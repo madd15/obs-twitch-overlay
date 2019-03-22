@@ -5,14 +5,6 @@ $(() => {
 
 
     const api = {
-        //
-        // getUser: (login, cb) => {
-        //     $.ajax('https://api.twitch.tv/helix/users', {
-        //         login: login
-        //     }, (resp) => {
-        //         console.log(resp)
-        //     })
-        // },
 
         getStream: (login, cb) => {
             $.ajax({
