@@ -47,23 +47,22 @@ app.get('/_twitch_webhooks', (req, res) => {
 
 
 function updateWebhookSubscriptions() {
-    const options = {
+    // create a new stream monitor
+    console.log('Creating stream webhook')
+    request.post({
         url: 'https://api.twitch.tv/helix/webhooks/hub',
         headers: {
             'Client-ID': clientId,
             'User-Agent': 'request',
         },
-        formData: {
+        body: JSON.stringify({
             hub: {
                 callback: baseUrl + '/_twitch_webhooks',
                 mode: 'subscribe',
                 topic: 'https://api.twitch.tv/helix/streams',
             }
-        }
-    }
-    // create a new stream monitor
-    console.log('Creating stream webhook')
-    request.post(options)
+        })
+    })
 }
 
 updateWebhookSubscriptions()
