@@ -30,7 +30,6 @@ app.get('/_twitch', (req, res) => {
         qs: query.qs,
     })
     console.log(`Proxy HTTP call to ${turl}...`)
-    console.log(opts)
     request(opts, (error, resp, rawBody) => {
         let body = JSON.parse(rawBody)
         if (resp.statusCode !== 200) {
@@ -44,8 +43,15 @@ app.get('/_twitch', (req, res) => {
 
 // For Twitch webhooks
 app.get('/_twitch_webhooks', (req, res) => {
-    let code = req.query['hub.challenge']
-    res.status(200).json({'hub.challenge': code})
+    let q = req.query
+    // this could be a subscription challenge
+    if (q['hub.challenge']) {
+        let code = q['hub.challenge']
+        res.status(200).json({'hub.challenge': code})
+    } else {
+        console.log(q)
+        console.log(req.rawBody)
+    }
 })
 
 
@@ -66,9 +72,11 @@ function updateWebhookSubscriptions() {
             'hub.topic': `https://api.twitch.tv/helix/streams?user_id=${userId}`,
         },
     }, function (error, response, body) {
-        console.log('error:', error); // Print the error if one occurred
-        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-        console.log('body:', body); // Print the HTML for the Google homepage.
+        if (response && response.statusCode === 202) {
+            console.log('Webhook subscription validated... awaiting creation.')
+        } else {
+            console.log(error)
+        }
     })
 }
 
