@@ -52,7 +52,7 @@
             $('#stream-time').html(duration.humanize())
         }
 
-        twitch.getStream('firstinspires1', (resp) => {
+        twitch.getStream('rhyolight_', (resp) => {
             let stream = resp.data[0]
             renderStream(stream)
         })
