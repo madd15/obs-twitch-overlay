@@ -2,6 +2,7 @@ let express = require('express')
 let request = require('request')
 
 let clientId = 'fmjgn1bqxpw7p0xgvryoe6027483ve'
+let appSecret = process.env.APP_SECRET
 let streamId = 'rhyolight_'
 let userId = '53666502'
 
@@ -55,29 +56,48 @@ app.get('/_twitch_webhooks', (req, res) => {
 })
 
 
-
-function updateWebhookSubscriptions() {
-    let callbackUrl = baseUrl + '/_twitch_webhooks'
-    // create a new stream monitor
-    console.log(`Creating stream webhook for ${callbackUrl}`)
-    request.post({
-        url: 'https://api.twitch.tv/helix/webhooks/hub',
+function getExistingSubs(cb) {
+    let payload = {
+        url: 'https://api.twitch.tv/helix/webhooks/subscriptions',
         headers: {
             'Client-ID': clientId,
+            'Authorization': `Bearer ${appSecret}`,
             'User-Agent': 'request',
-        },
-        json: {
-            'hub.callback': callbackUrl,
-            'hub.mode': 'subscribe',
-            'hub.topic': `https://api.twitch.tv/helix/streams?user_id=${userId}`,
-        },
-    }, function (error, response, body) {
-        if (response && response.statusCode === 202) {
-            console.log('Webhook subscription validated... awaiting creation.')
-        } else {
-            console.log(error)
         }
+    }
+    console.log(payload)
+    request(payload, (error, resp, rawBody) => {
+        console.log(arguments)
     })
+}
+
+
+function updateWebhookSubscriptions() {
+
+    getExistingSubs((subs) => {
+        // let callbackUrl = baseUrl + '/_twitch_webhooks'
+        // // create a new stream monitor
+        // console.log(`Creating stream webhook for ${callbackUrl}`)
+        // request.post({
+        //     url: 'https://api.twitch.tv/helix/webhooks/hub',
+        //     headers: {
+        //         'Client-ID': clientId,
+        //         'User-Agent': 'request',
+        //     },
+        //     json: {
+        //         'hub.callback': callbackUrl,
+        //         'hub.mode': 'subscribe',
+        //         'hub.topic': `https://api.twitch.tv/helix/streams?user_id=${userId}`,
+        //     },
+        // }, function (error, response, body) {
+        //     if (response && response.statusCode === 202) {
+        //         console.log('Webhook subscription validated... awaiting creation.')
+        //     } else {
+        //         console.log(error)
+        //     }
+        // })
+    })
+
 }
 
 updateWebhookSubscriptions()
