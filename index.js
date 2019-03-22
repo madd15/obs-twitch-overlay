@@ -3,6 +3,7 @@ let request = require('request')
 
 let clientId = 'fmjgn1bqxpw7p0xgvryoe6027483ve'
 let streamId = 'rhyolight_'
+let userId = '53666502'
 
 const app = express()
 const port = process.env.PORT || 5000
@@ -28,6 +29,8 @@ app.get('/_twitch', (req, res) => {
         url: turl,
         qs: query.qs,
     })
+    console.log(`Proxy HTTP call to ${turl}...`)
+    console.log(opts)
     request(opts, (error, resp, rawBody) => {
         let body = JSON.parse(rawBody)
         if (resp.statusCode !== 200) {
@@ -39,9 +42,10 @@ app.get('/_twitch', (req, res) => {
     })
 })
 
+// For Twitch webhooks
 app.get('/_twitch_webhooks', (req, res) => {
-    console.log(req.query)
-    console.log(req.body)
+    let code = req.query['hub.challenge']
+    res.end({'hub.challenge': code})
 })
 
 
@@ -56,13 +60,11 @@ function updateWebhookSubscriptions() {
             'Client-ID': clientId,
             'User-Agent': 'request',
         },
-        body: JSON.stringify({
-            hub: {
-                callback: callbackUrl,
-                mode: 'subscribe',
-                topic: 'https://api.twitch.tv/helix/streams',
-            }
-        })
+        json: {
+            'hub.callback': callbackUrl,
+            'hub.mode': 'subscribe',
+            'hub.topic': `https://api.twitch.tv/helix/streams?user_id=${userId}`,
+        },
     }, function (error, response, body) {
         console.log('error:', error); // Print the error if one occurred
         console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received

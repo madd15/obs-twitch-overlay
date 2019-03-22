@@ -17,6 +17,19 @@ $(() => {
                 },
                 success: cb
             });
+        },
+
+        getUser: (login, cb) => {
+            $.ajax({
+                url: '/_twitch',
+                data: {
+                    qs: {
+                        turl: 'https://api.twitch.tv/helix/users',
+                        login: login
+                    }
+                },
+                success: cb
+            });
         }
 
     }
