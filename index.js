@@ -45,7 +45,7 @@ app.get('/_twitch', (req, res) => {
 // For Twitch webhooks
 app.get('/_twitch_webhooks', (req, res) => {
     let code = req.query['hub.challenge']
-    res.end({'hub.challenge': code})
+    res.status(200).json({'hub.challenge': code})
 })
 
 
