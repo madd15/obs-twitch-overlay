@@ -67,7 +67,9 @@ function getExistingSubs(cb) {
     }
     console.log(payload)
     request(payload, (error, resp, rawBody) => {
-        console.log(arguments)
+        console.log(error)
+        console.log(resp)
+        console.log(rawBody)
     })
 }
 
