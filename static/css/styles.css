@@ -13,13 +13,17 @@ div {
     border: solid 1px black;
 }
 
-#header {
-    margin: 0;
+.bar {
     background-color: #00ccff;
     height: 55px;
     color: black;
     font-family: Verdana, Arial, sans-serif;
     font-size: 26pt;
+    width: 100%;
+}
+
+#header {
+    margin: 0;
     border-bottom: 2px solid #004ca0;
 }
 
@@ -27,4 +31,9 @@ div {
     width: 40px;
     height: 40px;
     margin-right: 4px;
+}
+
+#footer {
+    margin-top: 1088px;
+    border-top: 2px solid #004ca0;
 }

@@ -10,13 +10,12 @@ let options = {
 
 module.exports = {
 
-    getStreams: (gameId, cb) => {
+    getStreams: (params, cb) => {
+        let turl = params.turl
+        delete params.turl
         let opts = Object.assign({}, options, {
-            url: 'https://api.twitch.tv/helix/streams',
-            qs: {
-                game_id: gameId,
-                first: 10,
-            },
+            url: turl,
+            qs: params,
         })
         request(opts, (error, resp, rawBody) => {
             let body = JSON.parse(rawBody)
