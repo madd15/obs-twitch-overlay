@@ -7,10 +7,14 @@ div {
     /*background-color: cadetblue;*/
 }
 
+.row {
+    margin-right: inherit !important;
+}
+
 #overlay {
     width: 1920px;
     height: 1200px;
-    border: solid 1px black;
+    /*border: solid 1px black;*/
 }
 
 .bar {
@@ -19,7 +23,6 @@ div {
     color: black;
     font-family: Verdana, Arial, sans-serif;
     font-size: 26pt;
-    width: 100%;
 }
 
 #header {
