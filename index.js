@@ -108,27 +108,27 @@ function getExistingSubs(cb) {
 function updateWebhookSubscriptions() {
 
     getExistingSubs((subs) => {
-        // let callbackUrl = baseUrl + '/_twitch_webhooks'
-        // // create a new stream monitor
-        // console.log(`Creating stream webhook for ${callbackUrl}`)
-        // request.post({
-        //     url: 'https://api.twitch.tv/helix/webhooks/hub',
-        //     headers: {
-        //         'Client-ID': clientId,
-        //         'User-Agent': 'request',
-        //     },
-        //     json: {
-        //         'hub.callback': callbackUrl,
-        //         'hub.mode': 'subscribe',
-        //         'hub.topic': `https://api.twitch.tv/helix/streams?user_id=${userId}`,
-        //     },
-        // }, function (error, response, body) {
-        //     if (response && response.statusCode === 202) {
-        //         console.log('Webhook subscription validated... awaiting creation.')
-        //     } else {
-        //         console.log(error)
-        //     }
-        // })
+        let callbackUrl = baseUrl + '/_twitch_webhooks'
+        // create a new stream monitor
+        console.log(`Creating stream webhook for ${callbackUrl}`)
+        request.post({
+            url: 'https://api.twitch.tv/helix/webhooks/hub',
+            headers: {
+                'Client-ID': clientId,
+                'User-Agent': 'request',
+            },
+            json: {
+                'hub.callback': callbackUrl,
+                'hub.mode': 'subscribe',
+                'hub.topic': `https://api.twitch.tv/helix/streams?user_id=${userId}`,
+            },
+        }, function (error, response, body) {
+            if (response && response.statusCode === 202) {
+                console.log('Webhook subscription validated... awaiting creation.')
+            } else {
+                console.log(error)
+            }
+        })
     })
 
 }
