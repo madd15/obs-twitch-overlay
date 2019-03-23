@@ -8,10 +8,11 @@ let streamId = 'rhyolight_'
 let userId = '53666502'
 let appAccessToken
 
+const deployed = process.env.DEPLOYED === 'true'
 const app = express()
 const port = process.env.PORT || 8081
 let baseUrl = 'http://localhost'
-if (port === 5000) baseUrl = 'https://obs-twitch-overlay.herokuapp.com'
+if (deployed) baseUrl = 'https://obs-twitch-overlay.herokuapp.com'
 
 // This serves the static files for the JS client program.
 app.use(express.static('static'))
