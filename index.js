@@ -114,7 +114,7 @@ function getUser(login, cb) {
             login: login,
         }
     }, (error, resp, rawBody) => {
-        cb(JSON.parse(rawBody))
+        cb(JSON.parse(rawBody).data[0])
     })
 
 }
