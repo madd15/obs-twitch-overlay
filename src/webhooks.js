@@ -43,12 +43,14 @@ class Webhooks {
     webhookSubscribe(mode, topic) {
         let callbackUrl = this.callbackUrl
         let clientId = this.user.login
+        let appToken = this.appToken
         let hooksUrl = 'https://api.twitch.tv/helix/webhooks/hub'
         console.log(`WEBHOOK ${mode} for ${topic}`)
         request.post({
             url: hooksUrl,
             headers: {
                 'Client-ID': clientId,
+                'Authorization': `Bearer ${appToken}`,
             },
             json: {
                 'hub.callback': callbackUrl,
