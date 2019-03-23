@@ -97,9 +97,7 @@ function getExistingSubs(cb) {
         console.log('searching for existing webhooks...')
         console.log(payload)
         request(payload, (error, resp, rawBody) => {
-            console.log('Webhooks:')
-            let payload = JSON.parse(rawBody)
-            console.log(payload)
+            cb(JSON.parse(rawBody), payload)
         })
     })
 }
@@ -108,6 +106,8 @@ function getExistingSubs(cb) {
 function updateWebhookSubscriptions() {
 
     getExistingSubs((subs) => {
+        console.log('Webhooks:')
+        console.log(subs)
         let callbackUrl = baseUrl + '/_twitch_webhooks'
         // create a new stream monitor
         console.log(`Creating stream webhook for ${callbackUrl}`)
