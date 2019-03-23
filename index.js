@@ -21,7 +21,7 @@ let socket = io(server);
 // Global vars for server.
 let clientId = 'fmjgn1bqxpw7p0xgvryoe6027483ve'
 let clientSecret = process.env.CLIENT_SECRET || 's1u6yj9aexfmn7pp0vvgeiwfktbmar'
-let streamId = 'firstinspires1'
+let streamId = 'rhyolight_'
 
 // This serves the static files for the JS client program.
 app.use(express.static('static'))
