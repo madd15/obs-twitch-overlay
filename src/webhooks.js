@@ -60,7 +60,7 @@ class Webhooks {
             if (response && response.statusCode === 202) {
                 console.log('Webhook subscription change accepted.')
             } else {
-                console.log(error)
+                console.log(body)
             }
         })
     }
