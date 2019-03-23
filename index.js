@@ -47,14 +47,15 @@ app.get('/_twitch', (req, res) => {
 
 // For Twitch webhooks
 app.get('/_twitch_webhooks', (req, res) => {
+    console.warn('webhook received!')
     let q = req.query
     // this could be a subscription challenge
     if (q['hub.challenge']) {
         let code = q['hub.challenge']
         res.status(200).json({'hub.challenge': code})
     } else {
+        console.log('UNKNOWN WEBHOOK PACKAGE:')
         console.log(q)
-        console.log(req.rawBody)
     }
 })
 
@@ -93,11 +94,12 @@ function getExistingSubs(cb) {
                 'Authorization': `Bearer ${appAccessToken}`,
             }
         }
+        console.log('searching for existing webhooks...')
         console.log(payload)
         request(payload, (error, resp, rawBody) => {
-            console.log(error)
-            console.log(resp)
-            console.log(rawBody)
+            console.log('Webhooks:')
+            let payload = JSON.parse(rawBody)
+            console.log(payload)
         })
     })
 }
