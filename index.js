@@ -1,7 +1,8 @@
 let http = require('http');
 let express = require('express')
 let request = require('request')
-let io = require('socket.io');
+let io = require('socket.io')
+let Webhooks = require('./src/webhooks')
 
 const port = process.env.PORT || 8081
 
@@ -21,8 +22,6 @@ let socket = io(server);
 let clientId = 'fmjgn1bqxpw7p0xgvryoe6027483ve'
 let clientSecret = process.env.CLIENT_SECRET || 's1u6yj9aexfmn7pp0vvgeiwfktbmar'
 let streamId = 'firstinspires1'
-// This will be set on server startup.
-let appAccessToken
 
 // This serves the static files for the JS client program.
 app.use(express.static('static'))
@@ -74,50 +73,24 @@ app.get('/_twitch_webhooks', (req, res) => {
 
 // Following the Twitch API authentication flow by getting an app access token.
 function authenticate(cb) {
-    if (! appAccessToken) {
-        let opts = {
-            url: 'https://www.reddit.com/r/funny.json',
-            headers: {
-                'Client-ID': clientId,
-                'Authorization': `Bearer ${clientSecret}`,
-            },
-            json: {
-                client_id: clientId,
-                client_secret: clientSecret,
-                grant_type: 'client_credentials',
-                scope:'',
-            }
-        };
-        request.post('https://id.twitch.tv/oauth2/token', opts, (error, resp, body) => {
-            console.log('auth returned... storing access token')
-            appAccessToken = body.access_token
-            cb()
-        })
-    } else {
-        cb()
-    }
-}
-
-// Gets rid of any existing webhooks.
-function clearExistingSubs(cb) {
-    let payload = {
-        url: 'https://api.twitch.tv/helix/webhooks/subscriptions',
+    let opts = {
+        url: 'https://www.reddit.com/r/funny.json',
         headers: {
             'Client-ID': clientId,
-            'Authorization': `Bearer ${appAccessToken}`,
+            'Authorization': `Bearer ${clientSecret}`,
+        },
+        json: {
+            client_id: clientId,
+            client_secret: clientSecret,
+            grant_type: 'client_credentials',
+            scope:'',
         }
-    }
-    console.log('searching for existing webhooks...')
-    request(payload, (error, resp, rawBody) => {
-        let hooks = JSON.parse(rawBody).data
-        // can delete these asynchronously
-        hooks.forEach(hook => {
-            webhookSubscribe('unsubscribe', hook.topic)
-        })
-        cb()
+    };
+    request.post('https://id.twitch.tv/oauth2/token', opts, (error, resp, body) => {
+        console.log('auth returned... storing access token')
+        cb(body.access_token)
     })
 }
-
 
 function getUser(login, cb) {
     request('https://api.twitch.tv/helix/users', {
@@ -132,39 +105,6 @@ function getUser(login, cb) {
         cb(JSON.parse(rawBody).data[0])
     })
 
-}
-
-function webhookSubscribe(mode, topic) {
-    let hooksUrl = 'https://api.twitch.tv/helix/webhooks/hub'
-    console.log(`WEBHOOK ${mode} for ${topic}`)
-    request.post({
-        url: hooksUrl,
-        headers: {
-            'Client-ID': clientId,
-        },
-        json: {
-            'hub.callback': callbackUrl,
-            'hub.mode': mode,
-            'hub.lease_seconds': 864000,
-            'hub.topic': topic,
-        },
-    }, function (error, response, body) {
-        if (response && response.statusCode === 202) {
-            console.log('Webhook subscription change accepted.')
-        } else {
-            console.log(error)
-        }
-    })
-}
-
-function updateWebhookSubscriptions(login) {
-    getUser(login, (user) => {
-        clearExistingSubs((subs) => {
-            // create a new stream monitor
-            let topic = `https://api.twitch.tv/helix/streams?user_id=${user.id}`
-            webhookSubscribe('subscribe', topic);
-        })
-    })
 }
 
 function startServer() {
@@ -182,6 +122,10 @@ function startServer() {
 
 // Program start
 startServer()
-authenticate(() => {
-    updateWebhookSubscriptions(streamId)
+authenticate((token) => {
+    if (! token) throw new Error('Cannot get app token')
+    getUser(streamId, (user) => {
+        let webhooks = new Webhooks(user, callbackUrl, token)
+        webhooks.updateWebhookSubscriptions(user, token)
+    })
 })
