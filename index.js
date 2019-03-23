@@ -4,8 +4,7 @@ let request = require('request')
 let clientId = 'fmjgn1bqxpw7p0xgvryoe6027483ve'
 // let clientSecret = process.env.APP_SECRET
 let clientSecret = 's1u6yj9aexfmn7pp0vvgeiwfktbmar'
-let streamId = 'rhyolight_'
-let userId = '53666502'
+let streamId = 'inabeta'
 let appAccessToken
 
 const deployed = process.env.DEPLOYED === 'true'
@@ -105,38 +104,53 @@ function getExistingSubs(cb) {
 }
 
 
-function updateWebhookSubscriptions() {
-
-    getExistingSubs((subs) => {
-        console.log('Webhooks:')
-        console.log(subs)
-        let callbackUrl = baseUrl + '/_twitch_webhooks'
-        let hooksUrl = 'https://api.twitch.tv/helix/webhooks/hub'
-        // create a new stream monitor
-        console.log(`Creating ${hooksUrl} webhook for ${callbackUrl}`)
-        request.post({
-            url: hooksUrl,
-            headers: {
-                'Client-ID': clientId,
-            },
-            json: {
-                'hub.callback': callbackUrl,
-                'hub.mode': 'subscribe',
-                'hub.lease_seconds': 864000,
-                'hub.topic': `https://api.twitch.tv/helix/streams?user_id=${userId}`,
-            },
-        }, function (error, response, body) {
-            if (response && response.statusCode === 202) {
-                console.log('Webhook subscription accepted... awaiting creation.')
-            } else {
-                console.log(error)
-            }
-        })
+function getUser(login, cb) {
+    request('https://api.twitch.tv/helix/users', {
+        headers: {
+            'Client-ID': clientId,
+            'User-Agent': 'request',
+        },
+        qs: {
+            login: login,
+        }
+    }, (error, resp, rawBody) => {
+        cb(JSON.parse(rawBody))
     })
 
 }
 
-updateWebhookSubscriptions()
+function updateWebhookSubscriptions(login) {
+    getUser(login, (user) => {
+        getExistingSubs((subs) => {
+            console.log('Webhooks:')
+            console.log(subs)
+            let callbackUrl = baseUrl + '/_twitch_webhooks'
+            let hooksUrl = 'https://api.twitch.tv/helix/webhooks/hub'
+            // create a new stream monitor
+            console.log(`Creating ${hooksUrl} webhook for ${callbackUrl}`)
+            request.post({
+                url: hooksUrl,
+                headers: {
+                    'Client-ID': clientId,
+                },
+                json: {
+                    'hub.callback': callbackUrl,
+                    'hub.mode': 'subscribe',
+                    'hub.lease_seconds': 864000,
+                    'hub.topic': `https://api.twitch.tv/helix/streams?user_id=${user.id}`,
+                },
+            }, function (error, response, body) {
+                if (response && response.statusCode === 202) {
+                    console.log('Webhook subscription accepted... awaiting creation.')
+                } else {
+                    console.log(error)
+                }
+            })
+        })
+    })
+}
+
+updateWebhookSubscriptions(streamId)
 
 // twitch.getGame('Science & Technology', (err, scienceAndTech) => {
 //
