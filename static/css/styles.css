@@ -2,31 +2,20 @@ body {
     margin: 0;
 }
 
-div {
-    /*border: 1px solid darkblue;*/
-    /*background-color: cadetblue;*/
-}
-
-.row {
-    margin-right: inherit !important;
-}
-
-#overlay {
-    width: 1920px;
-    height: 1080px;
-    /*border: solid 1px black;*/
-}
-
 .bar {
+    margin-right: inherit !important;
+    padding: 0 20px;
+    position:fixed;
+    left: 0;
+    right: 0;
     background-color: #00ccff;
-    height: 55px;
     color: black;
     font-family: Verdana, Arial, sans-serif;
-    font-size: 26pt;
+    font-size: 16pt;
 }
 
 #header {
-    margin: 0;
+    top: 0;
     border-bottom: 2px solid #004ca0;
 }
 
@@ -37,7 +26,16 @@ div {
 }
 
 #footer {
-    margin-top: 970px;
     border-top: 2px solid #004ca0;
+    bottom: 0;
+}
 
+.time {
+    font-style: italic;
+    text-align: center;
+}
+
+.viewers {
+    font-style: italic;
+    text-align: right;
 }

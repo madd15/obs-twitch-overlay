@@ -8,8 +8,9 @@ let streamId = 'rhyolight_'
 let userId = '53666502'
 
 const app = express()
-const port = process.env.PORT || 5000
-const baseUrl = 'https://obs-twitch-overlay.herokuapp.com'
+const port = process.env.PORT || 8081
+let baseUrl = 'http://localhost'
+if (port === 5000) baseUrl = 'https://obs-twitch-overlay.herokuapp.com'
 
 // This serves the static files for the JS client program.
 app.use(express.static('static'))
@@ -117,7 +118,7 @@ function updateWebhookSubscriptions() {
 
 }
 
-updateWebhookSubscriptions()
+// updateWebhookSubscriptions()
 
 // twitch.getGame('Science & Technology', (err, scienceAndTech) => {
 //
