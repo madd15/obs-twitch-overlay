@@ -47,7 +47,7 @@ app.get('/_twitch', (req, res) => {
 })
 
 // For Twitch webhooks
-app.post('/_twitch_webhooks', (req, res) => {
+app.get('/_twitch_webhooks', (req, res) => {
     console.warn('webhook received!')
     let q = req.query
     console.log(q)
