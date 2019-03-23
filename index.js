@@ -153,7 +153,6 @@ function updateWebhookSubscriptions(login) {
     getUser(login, (user) => {
         clearExistingSubs((subs) => {
             // create a new stream monitor
-            console.log(`Creating ${hooksUrl} webhook for ${callbackUrl}`)
             let topic = `https://api.twitch.tv/helix/streams?user_id=${user.id}`
             webhookSubscribe('subscribe', topic);
         })
