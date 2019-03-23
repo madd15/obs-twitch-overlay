@@ -1,23 +1,26 @@
+const deployed = process.env.DEPLOYED === 'true'
+const port = process.env.PORT || 8081
+let baseUrl = 'http://localhost'
+if (deployed) baseUrl = 'https://obs-twitch-overlay.herokuapp.com'
+let callbackUrl = baseUrl + '/_twitch_webhooks'
+
 let express = require('express')
 let request = require('request')
+
+const app = express()
+let http = require('http').Server(app);
+let socket = require('socket.io')(http);
 
 let clientId = 'fmjgn1bqxpw7p0xgvryoe6027483ve'
 // let clientSecret = process.env.APP_SECRET
 let clientSecret = 's1u6yj9aexfmn7pp0vvgeiwfktbmar'
-let streamId = 'rhyolight_'
+let streamId = 'firstinspires1'
 let appAccessToken
 
-const deployed = process.env.DEPLOYED === 'true'
-const app = express()
-const port = process.env.PORT || 8081
-let baseUrl = 'http://localhost'
-if (deployed) baseUrl = 'https://obs-twitch-overlay.herokuapp.com'
+
 
 // This serves the static files for the JS client program.
 app.use(express.static('static'))
-app.listen(port, () => {
-    console.log(`${baseUrl}:${port}/index.html`)
-})
 
 app.get('/_twitch', (req, res) => {
     let query = req.query
@@ -56,7 +59,8 @@ app.get('/_twitch_webhooks', (req, res) => {
         res.status(200).end(code)
     } else {
         console.log('UNKNOWN WEBHOOK PACKAGE:')
-        console.log(q)
+        socket.emit('webhook', q);
+        res.end()
     }
 })
 
@@ -86,7 +90,7 @@ function authenticate(cb) {
 }
 
 
-function getExistingSubs(cb) {
+function clearExistingSubs(cb) {
     authenticate(() => {
         let payload = {
             url: 'https://api.twitch.tv/helix/webhooks/subscriptions',
@@ -96,9 +100,13 @@ function getExistingSubs(cb) {
             }
         }
         console.log('searching for existing webhooks...')
-        console.log(payload)
         request(payload, (error, resp, rawBody) => {
-            cb(JSON.parse(rawBody), payload)
+            let hooks = JSON.parse(rawBody).data
+            // can delete these asynchronously
+            hooks.forEach(hook => {
+                webhookSubscribe('unsubscribe', hook.topic)
+            })
+            cb()
         })
     })
 }
@@ -119,38 +127,57 @@ function getUser(login, cb) {
 
 }
 
+function webhookSubscribe(mode, topic) {
+    let hooksUrl = 'https://api.twitch.tv/helix/webhooks/hub'
+    request.post({
+        url: hooksUrl,
+        headers: {
+            'Client-ID': clientId,
+        },
+        json: {
+            'hub.callback': callbackUrl,
+            'hub.mode': mode,
+            'hub.lease_seconds': 864000,
+            'hub.topic': topic,
+        },
+    }, function (error, response, body) {
+        if (response && response.statusCode === 202) {
+            console.log('Webhook subscription accepted... awaiting creation.')
+        } else {
+            console.log(error)
+        }
+    })
+}
+
 function updateWebhookSubscriptions(login) {
     getUser(login, (user) => {
-        getExistingSubs((subs) => {
-            console.log('Webhooks:')
-            console.log(subs)
-            let callbackUrl = baseUrl + '/_twitch_webhooks'
-            let hooksUrl = 'https://api.twitch.tv/helix/webhooks/hub'
+        clearExistingSubs((subs) => {
             // create a new stream monitor
             console.log(`Creating ${hooksUrl} webhook for ${callbackUrl}`)
-            request.post({
-                url: hooksUrl,
-                headers: {
-                    'Client-ID': clientId,
-                },
-                json: {
-                    'hub.callback': callbackUrl,
-                    'hub.mode': 'subscribe',
-                    'hub.lease_seconds': 864000,
-                    'hub.topic': `https://api.twitch.tv/helix/streams?user_id=${user.id}`,
-                },
-            }, function (error, response, body) {
-                if (response && response.statusCode === 202) {
-                    console.log('Webhook subscription accepted... awaiting creation.')
-                } else {
-                    console.log(error)
-                }
-            })
+            let topic = `https://api.twitch.tv/helix/streams?user_id=${user.id}`
+            webhookSubscribe('subscribe', topic);
         })
     })
 }
 
 updateWebhookSubscriptions(streamId)
+
+http.listen(port, function(){
+    console.log(`serving HTML from ${baseUrl}:${port}/index.html`)
+    console.log(`listening on *:${port}`);
+});
+
+socket.on('connect', function(){
+    console.log('connect cb')
+});
+socket.on('event', function(data){
+    console.log('event cb')
+    console.log(data)
+});
+socket.on('disconnect', function(){
+    console.log('disconnect cb')
+});
+
 
 // twitch.getGame('Science & Technology', (err, scienceAndTech) => {
 //
