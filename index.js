@@ -122,6 +122,7 @@ function updateWebhookSubscriptions() {
             json: {
                 'hub.callback': callbackUrl,
                 'hub.mode': 'subscribe',
+                'hub.lease_seconds': 864000,
                 'hub.topic': `https://api.twitch.tv/helix/streams?user_id=${userId}`,
             },
         }, function (error, response, body) {
