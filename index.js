@@ -167,26 +167,21 @@ function updateWebhookSubscriptions(login) {
     })
 }
 
-function setupSocketComms() {
+function startServer() {
     server.listen(port, function(){
         console.log(`serving HTML from ${baseUrl}:${port}/index.html`)
         console.log(`listening on *:${port}`);
     });
-
     socket.on('connect', function(){
-        console.log('connect cb')
-    });
-    socket.on('event', function(data){
-        console.log('event cb')
-        console.log(data)
+        console.log('Connected to socket client.')
     });
     socket.on('disconnect', function(){
-        console.log('disconnect cb')
+        console.log('Disconnected from socket client.')
     });
 }
 
 // Program start
-setupSocketComms()
+startServer()
 authenticate(() => {
     updateWebhookSubscriptions(streamId)
 })
