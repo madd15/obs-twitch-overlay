@@ -50,6 +50,7 @@ app.get('/_twitch', (req, res) => {
 app.post('/_twitch_webhooks', (req, res) => {
     console.warn('webhook received!')
     let q = req.query
+    console.log(q)
     // this could be a subscription challenge
     if (q['hub.challenge']) {
         let code = q['hub.challenge']
@@ -57,7 +58,6 @@ app.post('/_twitch_webhooks', (req, res) => {
         res.status(200).json({'hub.challenge': code})
     } else {
         console.log('UNKNOWN WEBHOOK PACKAGE:')
-        console.log(q)
     }
 })
 
@@ -111,10 +111,11 @@ function updateWebhookSubscriptions() {
         console.log('Webhooks:')
         console.log(subs)
         let callbackUrl = baseUrl + '/_twitch_webhooks'
+        let hooksUrl = 'https://api.twitch.tv/helix/webhooks/hub'
         // create a new stream monitor
-        console.log(`Creating stream webhook for ${callbackUrl}`)
+        console.log(`Creating ${hooksUrl} webhook for ${callbackUrl}`)
         request.post({
-            url: 'https://api.twitch.tv/helix/webhooks/hub',
+            url: hooksUrl,
             headers: {
                 'Client-ID': clientId,
                 'User-Agent': 'request',
@@ -125,6 +126,7 @@ function updateWebhookSubscriptions() {
                 'hub.topic': `https://api.twitch.tv/helix/streams?user_id=${userId}`,
             },
         }, function (error, response, body) {
+            console.log(body)
             if (response && response.statusCode === 202) {
                 console.log('Webhook subscription validated... awaiting creation.')
             } else {
