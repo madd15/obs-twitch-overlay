@@ -47,12 +47,13 @@ app.get('/_twitch', (req, res) => {
 })
 
 // For Twitch webhooks
-app.get('/_twitch_webhooks', (req, res) => {
+app.post('/_twitch_webhooks', (req, res) => {
     console.warn('webhook received!')
     let q = req.query
     // this could be a subscription challenge
     if (q['hub.challenge']) {
         let code = q['hub.challenge']
+        console.log('returning hub.challenge')
         res.status(200).json({'hub.challenge': code})
     } else {
         console.log('UNKNOWN WEBHOOK PACKAGE:')
