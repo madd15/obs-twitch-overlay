@@ -4,7 +4,7 @@ let request = require('request')
 let clientId = 'fmjgn1bqxpw7p0xgvryoe6027483ve'
 // let clientSecret = process.env.APP_SECRET
 let clientSecret = 's1u6yj9aexfmn7pp0vvgeiwfktbmar'
-let streamId = 'inabeta'
+let streamId = 'rhyolight_'
 let appAccessToken
 
 const deployed = process.env.DEPLOYED === 'true'
@@ -49,7 +49,6 @@ app.get('/_twitch', (req, res) => {
 app.get('/_twitch_webhooks', (req, res) => {
     console.warn('webhook received!')
     let q = req.query
-    console.log(q)
     // this could be a subscription challenge
     if (q['hub.mode']) {
         let code = q['hub.challenge']
@@ -57,6 +56,7 @@ app.get('/_twitch_webhooks', (req, res) => {
         res.status(200).end(code)
     } else {
         console.log('UNKNOWN WEBHOOK PACKAGE:')
+        console.log(q)
     }
 })
 
