@@ -2,10 +2,11 @@ let express = require('express')
 let request = require('request')
 
 let clientId = 'fmjgn1bqxpw7p0xgvryoe6027483ve'
-// let appSecret = process.env.APP_SECRET
-let appSecret = 's1u6yj9aexfmn7pp0vvgeiwfktbmar'
+// let clientSecret = process.env.APP_SECRET
+let clientSecret = 's1u6yj9aexfmn7pp0vvgeiwfktbmar'
 let streamId = 'rhyolight_'
 let userId = '53666502'
+let appAccessToken
 
 const app = express()
 const port = process.env.PORT || 8081
@@ -57,35 +58,47 @@ app.get('/_twitch_webhooks', (req, res) => {
     }
 })
 
-
 function authenticate(cb) {
-    // POST https://id.twitch.tv/oauth2/token
-    //         ?client_id=<your client ID>
-    // &client_secret=<your client secret>
-    // &grant_type=client_credentials
-    // &scope=<space-separated list of scopes>
-    request.post({
-        url: 'https://id.twitch.tv/oauth2/token',
-        client_secret: appSecret,
-        grant_type: 'client_credentials',
-    })
+    if (! appAccessToken) {
+        let opts = {
+            url: 'https://www.reddit.com/r/funny.json',
+            headers: {
+                'Client-ID': clientId,
+                'Authorization': `Bearer ${clientSecret}`,
+            },
+            json: {
+                client_id: clientId,
+                client_secret: clientSecret,
+                grant_type: 'client_credentials',
+                scope:'',
+            }
+        };
+        request.post('https://id.twitch.tv/oauth2/token', opts, (error, resp, body) => {
+            console.log('auth returned... storing access token')
+            appAccessToken = body.access_token
+            cb()
+        })
+    } else {
+        cb()
+    }
 }
 
 
 function getExistingSubs(cb) {
-    let payload = {
-        url: 'https://api.twitch.tv/helix/webhooks/subscriptions',
-        headers: {
-            'Client-ID': clientId,
-            // 'Authorization': `Bearer ${clientId}`,
-            'User-Agent': 'request',
+    authenticate(() => {
+        let payload = {
+            url: 'https://api.twitch.tv/helix/webhooks/subscriptions',
+            headers: {
+                'Client-ID': clientId,
+                'Authorization': `Bearer ${appAccessToken}`,
+            }
         }
-    }
-    console.log(payload)
-    request(payload, (error, resp, rawBody) => {
-        console.log(error)
-        console.log(resp)
-        console.log(rawBody)
+        console.log(payload)
+        request(payload, (error, resp, rawBody) => {
+            console.log(error)
+            console.log(resp)
+            console.log(rawBody)
+        })
     })
 }
 
@@ -118,7 +131,7 @@ function updateWebhookSubscriptions() {
 
 }
 
-// updateWebhookSubscriptions()
+updateWebhookSubscriptions()
 
 // twitch.getGame('Science & Technology', (err, scienceAndTech) => {
 //
