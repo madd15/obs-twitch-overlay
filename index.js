@@ -129,6 +129,7 @@ function getUser(login, cb) {
 
 function webhookSubscribe(mode, topic) {
     let hooksUrl = 'https://api.twitch.tv/helix/webhooks/hub'
+    console.log(`WEBHOOK ${mode} for ${topic}`)
     request.post({
         url: hooksUrl,
         headers: {
