@@ -1,5 +1,8 @@
 let request = require('request')
 
+let subUrl = 'https://api.twitch.tv/helix/webhooks/hub'
+
+
 class Webhooks {
 
     constructor(user, callbackUrl, appToken) {
@@ -32,6 +35,7 @@ class Webhooks {
         console.log('searching for existing webhooks...')
         request(payload, (error, resp, rawBody) => {
             let hooks = JSON.parse(rawBody).data
+            console.log(`Removing ${hooks.length} subscriptions...`)
             // can delete these asynchronously
             hooks.forEach(hook => {
                 me.webhookSubscribe('unsubscribe', hook.topic)
@@ -44,10 +48,9 @@ class Webhooks {
         let callbackUrl = this.callbackUrl
         let clientId = this.user.login
         let appToken = this.appToken
-        let hooksUrl = 'https://api.twitch.tv/helix/webhooks/hub'
         console.log(`WEBHOOK ${mode} for ${topic}`)
         request.post({
-            url: hooksUrl,
+            url: subUrl,
             headers: {
                 'Client-ID': clientId,
                 'Authorization': `Bearer ${appToken}`,

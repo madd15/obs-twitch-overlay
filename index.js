@@ -29,9 +29,9 @@ let targetLogin = 'rhyolight_'
 // This serves the static files for the JS client program.
 app.use(express.static('static'))
 
-// This is the URL that Twitch will call with webhook subscription updates.
-app.post('/_twitch_webhooks', (req, res) => {
-    console.log('webhook received!')
+// For confirming webhook subscriptions (GET).
+app.get('/_twitch_webhooks', (req, res) => {
+    console.log('confirming webhook')
     let q = req.query
     // this could be a subscription challenge
     if (q['hub.mode']) {
@@ -39,15 +39,18 @@ app.post('/_twitch_webhooks', (req, res) => {
         console.log('returning hub.challenge')
         res.status(200).end(code)
     } else {
-        console.log('Passing webhook payload to socket client.')
-        // TODO: parse payload and emit them over socket
-        // socket.emit('<event-type>', q);
-        console.log(q)
-        socket.emit('stream', q.data[0])
-        res.end()
+        res.status(400).end()
     }
 })
 
+// This is the URL that Twitch will call with webhook subscription updates.
+app.post('/_twitch_webhooks', (req, res) => {
+    console.log('webhook received!')
+    let q = req.query
+    console.log(q)
+    socket.emit('stream', q.data[0])
+    res.end()
+})
 
 function startServer(twitch, login) {
     server.listen(port, function(){
