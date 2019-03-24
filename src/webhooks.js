@@ -18,7 +18,7 @@ class Webhooks {
             // create a new stream monitor
             let streamsSub = `https://api.twitch.tv/helix/streams?user_id=${user.id}`
             let usersSub = `https://api.twitch.tv/helix/users?id=${user.id}`
-            me.webhookSubscribe('subscribe', usersSub);
+            me.webhookSubscribe('subscribe', streamsSub);
         })
     }
 
