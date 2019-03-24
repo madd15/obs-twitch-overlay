@@ -26,7 +26,7 @@ let clientId = 'fmjgn1bqxpw7p0xgvryoe6027483ve'
 let clientSecret = process.env.CLIENT_SECRET || 's1u6yj9aexfmn7pp0vvgeiwfktbmar'
 
 // The Twitch user to monitor
-let targetLogin = 'rhyolight_'
+let targetLogin = 'FIRSTinspires5'
 
 // This serves the static files for the JS client program.
 app.use(express.static('static'))
