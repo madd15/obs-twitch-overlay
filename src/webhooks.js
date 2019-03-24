@@ -16,8 +16,9 @@ class Webhooks {
         let user = this.user
         me.clearExistingSubs((subs) => {
             // create a new stream monitor
-            let topic = `https://api.twitch.tv/helix/streams?user_id=${user.id}`
-            me.webhookSubscribe('subscribe', topic);
+            let streamsSub = `https://api.twitch.tv/helix/streams?user_id=${user.id}`
+            let usersSub = `https://api.twitch.tv/helix/users?id=${user.id}`
+            me.webhookSubscribe('subscribe', usersSub);
         })
     }
 

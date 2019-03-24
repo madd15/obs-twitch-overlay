@@ -1,6 +1,7 @@
 let http = require('http');
 let express = require('express')
 let io = require('socket.io')
+let bodyParser = require('body-parser')
 
 // I wrote these classes
 let Webhooks = require('./src/webhooks')
@@ -16,6 +17,7 @@ const port = process.env.PORT || 8081
 
 // Create server and comms.
 const app = express()
+app.use(bodyParser.json())
 let server = http.Server(app);
 let socket = io(server);
 
