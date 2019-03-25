@@ -26,7 +26,7 @@ let clientId = 'fmjgn1bqxpw7p0xgvryoe6027483ve'
 let clientSecret = process.env.CLIENT_SECRET || 's1u6yj9aexfmn7pp0vvgeiwfktbmar'
 
 // The Twitch user to monitor
-let targetLogin = 'FIRSTinspires5'
+let targetLogin = 'rhyolight_'
 
 // This serves the static files for the JS client program.
 app.use(express.static('static'))
@@ -76,7 +76,13 @@ startServer(twitch, targetLogin)
 twitch.authenticate((token) => {
     if (! token) throw new Error('Cannot get app token')
     twitch.getUser(targetLogin, (user) => {
-        let webhooks = new Webhooks(user, hookUrl, token)
-        webhooks.updateWebhookSubscriptions(user, token)
+        // let webhooks = new Webhooks(user, hookUrl, token)
+        // webhooks.updateWebhookSubscriptions(user, token)
+        // Every minute, poll for updated stream data
+        setTimeout(() => {
+            twitch.getStream(user.login, (stream) => {
+                socket.emit('stream', stream)
+            })
+        }, 1000*60)
     })
 })
