@@ -22,8 +22,8 @@ let server = http.Server(app);
 let socket = io(server);
 
 // Global vars for server.
-let clientId = 'fmjgn1bqxpw7p0xgvryoe6027483ve'
-let clientSecret = process.env.CLIENT_SECRET || 's1u6yj9aexfmn7pp0vvgeiwfktbmar'
+let clientId = 'ypls83vssc96liotqk7xk8jnkpov70';
+let clientSecret = process.env.CLIENT_SECRET || '43cpba9clp8n38t2p4fl0lsy610n8t';
 
 // The Twitch user to monitor
 let targetLogin = 'Madd15'
